@@ -11,6 +11,7 @@
  ********************************************************************/
 
 #include "app.h"
+#include "motor_ctrl.h"
 
 /********************************************************************
  *                      DEFINICIONES
@@ -49,11 +50,12 @@
 void APP_init(void)
 {
     /* Inicializar modulos */
+    MOTOR_CTRL_init();
 
 }
 
 void APP_loop(void)
 {
-    /* Bucle principal */
+    MOTOR_CTRL_loop();
 
 }
