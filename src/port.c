@@ -11,14 +11,16 @@
  ********************************************************************/
 
 #include "port.h"
-
-#include "lpc17xx_pinsel.h"
-#include "lpc17xx_gpio.h"
+#include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/rcc.h>
 
 /********************************************************************
  *                      DEFINICIONES
  ********************************************************************/
 
+#define RCC_PORT_SWITCH RCC_GPIOA
+#define RCC_PORT_SIGNANLS RCC_GPIOA
+#define RCC_PORT_OUTPUTS RCC_GPIOA
 
 /********************************************************************
  *                      ENUMERADOS
@@ -51,117 +53,82 @@
 
 void PORT_init_switches(void)
 {
-    PINSEL_CFG_Type config = {
-        .Portnum = MOTOR_PORT_SWITCH,
-        .Funcnum = PINSEL_FUNC_0,
-        .Pinmode = PINSEL_PINMODE_PULLUP,
-        .OpenDrain = PINSEL_PINMODE_NORMAL,
-    };
-
-    config.Pinnum = MOTOR_SWITCH_1;
-    PINSEL_ConfigPin(&config);
-
-    config.Pinnum = MOTOR_SWITCH_1;
-    PINSEL_ConfigPin(&config);
-
-    GPIO_SetDir(MOTOR_PORT_SWITCH, MOTOR_SWITCHES_MASK, GPIO_DIR_INPUT);
-    GPIO_IntCmd(MOTOR_PORT_SWITCH, MOTOR_SWITCHES_MASK, FALLING_EDGE);
-    GPIO_ClearInt(MOTOR_PORT_SWITCH, MOTOR_SWITCHES_MASK);
-    NVIC_EnableIRQ(EINT3_IRQn);
+    rcc_periph_clock_enable(RCC_PORT_SWITCH);
+    gpio_set_mode(MOTOR_PORT_SWITCH, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, MOTOR_SWITCHES_MASK);
+    gpio_set(MOTOR_PORT_SWITCH, MOTOR_SWITCHES_MASK);
 }
 
 
 void PORT_init_signals(void)
 {
-    PINSEL_CFG_Type config = {
-        .Portnum = MOTOR_PORT_SIGNAL,
-        .Funcnum = PINSEL_FUNC_0,
-        .Pinmode = PINSEL_PINMODE_NORMAL,
-        .OpenDrain = PINSEL_PINMODE_NORMAL,
-    };
-
-    config.Pinnum = MOTOR_SIGNAL_1;
-    PINSEL_ConfigPin(&config);
-
-    config.Pinnum = MOTOR_SIGNAL_2;
-    PINSEL_ConfigPin(&config);
-
-    config.Pinnum = MOTOR_SIGNAL_3;
-    PINSEL_ConfigPin(&config);
-
-    config.Pinnum = MOTOR_SIGNAL_4;
-    PINSEL_ConfigPin(&config);
-
-    GPIO_SetDir(MOTOR_PORT_SIGNAL, MOTOR_SIGNALS_MASK, GPIO_DIR_OUTPUT);
+    rcc_periph_clock_enable(RCC_PORT_SIGNANLS);
+    gpio_set_mode(MOTOR_PORT_SIGNAL, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, MOTOR_SIGNALS_MASK);
+    gpio_clear(MOTOR_PORT_SIGNAL, MOTOR_SIGNALS_MASK);
 }
 
 void PORT_init_outputs(void)
 {
-    PINSEL_CFG_Type config = {
-        .Portnum = MOTOR_PORT_OUTPUT,
-        .Funcnum = PINSEL_FUNC_0,
-        .Pinmode = PINSEL_PINMODE_NORMAL,
-        .OpenDrain = PINSEL_PINMODE_NORMAL,
-    };
-
-    config.Pinnum = MOTOR_LED;
-    PINSEL_ConfigPin(&config);
-
-    config.Pinnum = MOTOR_BUZZER;
-    PINSEL_ConfigPin(&config);
-
-    GPIO_SetDir(MOTOR_PORT_SIGNAL, MOTOR_SIGNALS_MASK, GPIO_DIR_OUTPUT);
+    rcc_periph_clock_enable(RCC_PORT_OUTPUTS);
+    gpio_set_mode(MOTOR_PORT_OUTPUT, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, MOTOR_OUTPUTS_MASK);
+    gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_OUTPUTS_MASK);
 }
 
 void PORT_motor_signal_1_on(void)
 {
-    GPIO_SetValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_1_MASK);
+    gpio_set(MOTOR_PORT_SIGNAL, MOTOR_SIGNAL_1_MASK);
 }
+
 void PORT_motor_signal_2_on(void)
 {
-    GPIO_SetValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_2_MASK);
+    gpio_set(MOTOR_PORT_SIGNAL, MOTOR_SIGNAL_2_MASK);
 }
+
 void PORT_motor_signal_3_on(void)
 {
-    GPIO_SetValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_3_MASK);
+    gpio_set(MOTOR_PORT_SIGNAL, MOTOR_SIGNAL_3_MASK);
 }
+
 void PORT_motor_signal_4_on(void)
 {
-    GPIO_SetValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_4_MASK);
+    gpio_set(MOTOR_PORT_SIGNAL, MOTOR_SIGNAL_4_MASK);
 }
 
 void PORT_motor_signal_1_off(void)
 {
-    GPIO_ClearValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_1_MASK);
+    gpio_clear(MOTOR_PORT_SIGNAL, MOTOR_SIGNAL_1_MASK);
 }
+
 void PORT_motor_signal_2_off(void)
 {
-    GPIO_ClearValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_2_MASK);
+    gpio_clear(MOTOR_PORT_SIGNAL, MOTOR_SIGNAL_2_MASK);
 }
+
 void PORT_motor_signal_3_off(void)
 {
-    GPIO_ClearValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_3_MASK);
+    gpio_clear(MOTOR_PORT_SIGNAL, MOTOR_SIGNAL_3_MASK);
 }
+
 void PORT_motor_signal_4_off(void)
 {
-    GPIO_ClearValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_4_MASK);
+    gpio_clear(MOTOR_PORT_SIGNAL, MOTOR_SIGNAL_4_MASK);
 }
 
 
 void PORT_led_on(void)
 {
-    GPIO_SetValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_4_MASK);
+    gpio_set(MOTOR_PORT_OUTPUT, MOTOR_LED_MASK);
 }
 void PORT_led_off(void)
 {
-    GPIO_ClearValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_4_MASK);
+    gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_LED_MASK);
 }
 
 void PORT_buzzer_on(void)
 {
-    GPIO_SetValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_4_MASK);
+    gpio_set(MOTOR_PORT_OUTPUT, MOTOR_BUZZER_MASK);
 }
+    
 void PORT_buzzer_off(void)
 {
-    GPIO_ClearValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_4_MASK);
+    gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_BUZZER_MASK);
 }
