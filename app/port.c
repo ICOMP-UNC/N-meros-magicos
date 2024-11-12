@@ -95,6 +95,24 @@ void PORT_init_signals(void)
     GPIO_SetDir(MOTOR_PORT_SIGNAL, MOTOR_SIGNALS_MASK, GPIO_DIR_OUTPUT);
 }
 
+void PORT_init_outputs(void)
+{
+    PINSEL_CFG_Type config = {
+        .Portnum = MOTOR_PORT_OUTPUT,
+        .Funcnum = PINSEL_FUNC_0,
+        .Pinmode = PINSEL_PINMODE_NORMAL,
+        .OpenDrain = PINSEL_PINMODE_NORMAL,
+    };
+
+    config.Pinnum = MOTOR_LED;
+    PINSEL_ConfigPin(&config);
+
+    config.Pinnum = MOTOR_BUZZER;
+    PINSEL_ConfigPin(&config);
+
+    GPIO_SetDir(MOTOR_PORT_SIGNAL, MOTOR_SIGNALS_MASK, GPIO_DIR_OUTPUT);
+}
+
 void PORT_motor_signal_1_on(void)
 {
     GPIO_SetValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_1_MASK);
@@ -125,6 +143,25 @@ void PORT_motor_signal_3_off(void)
     GPIO_ClearValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_3_MASK);
 }
 void PORT_motor_signal_4_off(void)
+{
+    GPIO_ClearValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_4_MASK);
+}
+
+
+void PORT_led_on(void)
+{
+    GPIO_SetValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_4_MASK);
+}
+void PORT_led_off(void)
+{
+    GPIO_ClearValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_4_MASK);
+}
+
+void PORT_buzzer_on(void)
+{
+    GPIO_SetValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_4_MASK);
+}
+void PORT_buzzer_off(void)
 {
     GPIO_ClearValue(MOTOR_PORT_SIGNAL,MOTOR_SIGNAL_4_MASK);
 }
