@@ -8,7 +8,6 @@
 /********************************************************************
  *                      INCLUSIONES
  ********************************************************************/
-#include "lpc17xx_gpio.h"
 #include "port.h"
 #include "motor_ctrl.h"
 
@@ -47,18 +46,4 @@
  ********************************************************************/
 
 
-void EINT3_IRQHandler(void)
-{
-    if(GPIO_GetIntStatus(MOTOR_PORT_SWITCH, MOTOR_SWITCH_1, FALLING_EDGE) == ENABLE)
-    {
-        GPIO_ClearInt(MOTOR_PORT_SWITCH, MOTOR_SWITCH_1_MASK);
-        MOTOR_CTRL_switch_1();
-    }
 
-    if(GPIO_GetIntStatus(MOTOR_PORT_SWITCH, MOTOR_SWITCH_2, FALLING_EDGE) == ENABLE)
-    {
-        GPIO_ClearInt(MOTOR_PORT_SWITCH, MOTOR_SWITCH_2_MASK);
-        MOTOR_CTRL_switch_2();
-    }
-	return;
-}
