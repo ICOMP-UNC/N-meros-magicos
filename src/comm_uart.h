@@ -32,4 +32,5 @@
  ********************************************************************/
 
 void COMM_UART_init(void);
+void COMM_UART_loop(void);
 #endif
