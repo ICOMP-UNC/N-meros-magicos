@@ -34,12 +34,11 @@
 #define MOTOR_SWITCH_2_MASK GPIO5
 
 #define MOTOR_LED_MASK GPIO6
-#define MOTOR_BUZZER_MASK GPIO7
 
 
 #define MOTOR_SWITCHES_MASK (MOTOR_SWITCH_1_MASK | MOTOR_SWITCH_2_MASK)
 #define MOTOR_SIGNALS_MASK (MOTOR_SIGNAL_1_MASK | MOTOR_SIGNAL_2_MASK | MOTOR_SIGNAL_3_MASK | MOTOR_SIGNAL_4_MASK)
-#define MOTOR_OUTPUTS_MASK (MOTOR_LED_MASK | MOTOR_BUZZER_MASK)
+#define MOTOR_OUTPUTS_MASK (MOTOR_LED_MASK)
 
 /********************************************************************
  *                      ENUMERADOS
@@ -73,6 +72,8 @@ void PORT_led_on(void);
 void PORT_built_in_led_off(void);
 void PORT_built_in_led_on(void);
 void PORT_built_in_led_toggle(void);
+
+void PORT_init_buzzer(void);
 void PORT_buzzer_on(void);
 void PORT_buzzer_off(void);
 

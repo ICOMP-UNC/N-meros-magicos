@@ -90,4 +90,5 @@ void APP_loop(void)
 {
     MOTOR_CTRL_loop();
     COMM_UART_loop();
+    OUTPUT_loop();
 }
