@@ -22,11 +22,13 @@
 #define MOTOR_PORT_SIGNAL  GPIOA
 #define MOTOR_PORT_SWITCH  GPIOA
 #define MOTOR_PORT_OUTPUT  GPIOA
+#define PORT_BUILT_IN_LED  GPIOC
 
 #define MOTOR_SIGNAL_1_MASK GPIO0
 #define MOTOR_SIGNAL_2_MASK GPIO1
 #define MOTOR_SIGNAL_3_MASK GPIO2
 #define MOTOR_SIGNAL_4_MASK GPIO3
+#define BUILT_IN_LED_MASK GPIO13
 
 #define MOTOR_SWITCH_1_MASK GPIO4
 #define MOTOR_SWITCH_2_MASK GPIO5
@@ -68,6 +70,9 @@ void PORT_motor_signal_4_off(void);
 void PORT_init_outputs(void);
 void PORT_led_off(void);
 void PORT_led_on(void);
+void PORT_built_in_led_off(void);
+void PORT_built_in_led_on(void);
+void PORT_built_in_led_toggle(void);
 void PORT_buzzer_on(void);
 void PORT_buzzer_off(void);
 

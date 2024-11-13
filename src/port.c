@@ -21,6 +21,7 @@
 #define RCC_PORT_SWITCH RCC_GPIOA
 #define RCC_PORT_SIGNANLS RCC_GPIOA
 #define RCC_PORT_OUTPUTS RCC_GPIOA
+#define RCC_PORT_BUILT_IN_LED RCC_GPIOC
 
 /********************************************************************
  *                      ENUMERADOS
@@ -69,10 +70,13 @@ void PORT_init_signals(void)
 void PORT_init_outputs(void)
 {
     rcc_periph_clock_enable(RCC_PORT_OUTPUTS);
+    rcc_periph_clock_enable(RCC_PORT_BUILT_IN_LED);
+
     gpio_set_mode(MOTOR_PORT_OUTPUT, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, MOTOR_OUTPUTS_MASK);
     gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_OUTPUTS_MASK);
-}
 
+    gpio_set_mode(PORT_BUILT_IN_LED, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, BUILT_IN_LED_MASK);
+}
 void PORT_motor_signal_1_on(void)
 {
     gpio_set(MOTOR_PORT_SIGNAL, MOTOR_SIGNAL_1_MASK);
@@ -121,6 +125,20 @@ void PORT_led_on(void)
 void PORT_led_off(void)
 {
     gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_LED_MASK);
+}
+
+void PORT_built_in_led_on(void)
+{
+    gpio_set(PORT_BUILT_IN_LED, BUILT_IN_LED_MASK);
+}
+void PORT_built_in_led_off(void)
+{
+    gpio_clear(PORT_BUILT_IN_LED, BUILT_IN_LED_MASK);
+}
+
+void PORT_built_in_led_toggle(void)
+{
+    gpio_toggle(PORT_BUILT_IN_LED, BUILT_IN_LED_MASK);
 }
 
 void PORT_buzzer_on(void)

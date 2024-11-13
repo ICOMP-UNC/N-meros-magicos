@@ -12,6 +12,7 @@
 
 #include "output.h"
 #include "port.h"
+#include "stdint.h"
 
 /********************************************************************
  *                      DEFINICIONES
@@ -32,6 +33,8 @@
  *                      VARIABLES LOCALES
  ********************************************************************/
 
+static uint32_t built_in_led_timer;
+
 
 /********************************************************************
  *                      PROTOTIPO FUNCIONES LOCALES
@@ -50,6 +53,7 @@
 void OUTPUT_init(void)
 {
     PORT_init_outputs();
+    built_in_led_timer = 1000;
 }
 
 void OUTPUT_led_on(void)
@@ -70,4 +74,21 @@ void OUTPUT_buzzer_on(void)
 void OUTPUT_buzzer_off(void)
 {
     PORT_buzzer_off();
+}
+
+void OUTPUT_loop(void)
+{
+}
+
+void OUTPUT_timers(void)
+{
+    if (built_in_led_timer)
+    {
+        built_in_led_timer--;
+    }
+    else
+    {
+        built_in_led_timer = 1000;
+        PORT_built_in_led_toggle();
+    }
 }
