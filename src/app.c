@@ -13,6 +13,7 @@
 #include "app.h"
 #include "motor_ctrl.h"
 #include "comm_uart.h"
+#include "output.h"
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/cm3/systick.h>
 
@@ -60,6 +61,7 @@ static void systemInit(void)
 void sys_tick_handler(void)
 {
     MOTOR_CTRL_timers();
+    OUTPUT_timers();
 }
 
 // Initialize SysTick to generate an interrupt every 1ms
@@ -82,11 +84,12 @@ void APP_init(void)
     /* Inicializar modulos */
     MOTOR_CTRL_init();
 	COMM_UART_init();
-
+    OUTPUT_init();
 }
 
 void APP_loop(void)
 {
     MOTOR_CTRL_loop();
     COMM_UART_loop();
+    OUTPUT_loop();
 }
