@@ -13,6 +13,7 @@
 #include "port.h"
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/timer.h>
 
 /********************************************************************
  *                      DEFINICIONES
@@ -21,6 +22,14 @@
 #define RCC_PORT_SWITCH RCC_GPIOA
 #define RCC_PORT_SIGNANLS RCC_GPIOA
 #define RCC_PORT_OUTPUTS RCC_GPIOA
+#define RCC_PORT_BUZZER RCC_GPIOB
+#define RCC_PORT_BUILT_IN_LED RCC_GPIOC
+
+
+#define BUZZER_PORT GPIOB
+#define BUZZER_MASK GPIO9
+
+#define BUZZER_MAX_PERIOD 40909
 
 /********************************************************************
  *                      ENUMERADOS
@@ -69,8 +78,46 @@ void PORT_init_signals(void)
 void PORT_init_outputs(void)
 {
     rcc_periph_clock_enable(RCC_PORT_OUTPUTS);
-    gpio_set_mode(MOTOR_PORT_OUTPUT, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, MOTOR_OUTPUTS_MASK);
-    gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_OUTPUTS_MASK);
+    rcc_periph_clock_enable(RCC_PORT_BUILT_IN_LED);
+
+    gpio_set_mode(MOTOR_PORT_OUTPUT, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, MOTOR_LED_MASK);
+    gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_LED_MASK);
+
+    gpio_set_mode(PORT_BUILT_IN_LED, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, BUILT_IN_LED_MASK);
+}
+
+void PORT_init_buzzer(void)
+{
+    /* Se configuran los pines de los puertos correspondientes */
+    rcc_periph_clock_enable(RCC_PORT_BUZZER);
+    rcc_periph_clock_enable(RCC_TIM4);
+    gpio_set_mode(
+        BUZZER_PORT,                          // Puerto correspondiente
+        GPIO_MODE_OUTPUT_2_MHZ,         // Máxima velocidad de switcheo
+        GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, // Función alternativa
+        BUZZER_MASK);         // Pines asociados al OC2, OC3 y OC4
+    /* Se configura el TIM como PWM alineado al centro */
+    timer_set_mode(
+        TIM4,                 // Timer general 4
+        TIM_CR1_CKD_CK_INT,   // Clock interno como fuente
+        TIM_CR1_CMS_CENTER_1, // Modo centrado
+        TIM_CR1_DIR_UP);      // Indistinto, esto es ignorado...
+    /*  Seteamos la cuenta del Timer
+         
+        Recordemos que como el PWM está alineado al centro el timer
+        cuenta para arriba y luego para abajo, por lo tanto, debemos
+        dividir la frecuencia x2.
+    */
+    timer_set_period(TIM4, BUZZER_MAX_PERIOD - 1); // 72M/40909 = 1760hz
+    // Configuramos las salidas del timer:
+    timer_set_oc_mode(TIM4, TIM_OC4, TIM_OCM_PWM2);
+    // Habilitamos las salidas de los canales:
+    timer_enable_oc_output(TIM4, TIM_OC4);
+    
+    timer_set_oc_value(TIM4, TIM_OC4, BUZZER_MAX_PERIOD/2);
+
+    timer_enable_counter(TIM4);
+
 }
 
 void PORT_motor_signal_1_on(void)
@@ -123,12 +170,26 @@ void PORT_led_off(void)
     gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_LED_MASK);
 }
 
+void PORT_built_in_led_on(void)
+{
+    gpio_set(PORT_BUILT_IN_LED, BUILT_IN_LED_MASK);
+}
+void PORT_built_in_led_off(void)
+{
+    gpio_clear(PORT_BUILT_IN_LED, BUILT_IN_LED_MASK);
+}
+
+void PORT_built_in_led_toggle(void)
+{
+    gpio_toggle(PORT_BUILT_IN_LED, BUILT_IN_LED_MASK);
+}
+
 void PORT_buzzer_on(void)
 {
-    gpio_set(MOTOR_PORT_OUTPUT, MOTOR_BUZZER_MASK);
+    timer_enable_oc_output(TIM4, TIM_OC4);
 }
     
 void PORT_buzzer_off(void)
 {
-    gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_BUZZER_MASK);
+    timer_disable_oc_output(TIM4, TIM_OC4);
 }
