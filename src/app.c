@@ -60,6 +60,7 @@ static void systemInit(void)
 // SysTick Handler
 void sys_tick_handler(void)
 {
+    MOTOR_CTRL_timers();
     OUTPUT_timers();
 }
 
