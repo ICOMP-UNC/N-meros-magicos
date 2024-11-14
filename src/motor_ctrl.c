@@ -22,9 +22,9 @@
 #define MOTOR_STATUS_LIMIT_1 0x0001
 #define MOTOR_STATUS_LIMIT_2 0x0002
 
-#define STEP_TIMEOUT_HIGH 10
-#define STEP_TIMEOUT_MED  20
-#define STEP_TIMEOUT_LOW  40
+#define STEP_TIMEOUT_HIGH 2
+#define STEP_TIMEOUT_MED  4
+#define STEP_TIMEOUT_LOW  8
 
 
 /********************************************************************
@@ -92,10 +92,10 @@ static void motor_on(void)
 {
     int steps_matrix [4][4] =
     //  T1, T2, T3, T4
-    {{  1,  1,  0,  0},     //SIGNAL_1
-     {  0,  1,  1,  0},     //SIGNAL_2
-     {  0,  0,  1,  1},     //SIGNAL_3
-     {  1,  0,  0,  1}};    //SIGNAL_4
+    {{  0,  1,  1,  1},     //SIGNAL_1
+     {  1,  0,  1,  1},     //SIGNAL_2
+     {  1,  1,  0,  1},     //SIGNAL_3
+     {  1,  1,  1,  0}};    //SIGNAL_4
 
     if (steps_matrix[SIGNAL_1][step])
         PORT_motor_signal_1_on();
@@ -266,14 +266,12 @@ void execute(void)
         if (status & MOTOR_STATUS_LIMIT_2)
         {
             final_pos = limit_2_pos - offset_pos;
-            motor_off();
             motor_move_to_pos(initial_pos);
         }
         else if (status & MOTOR_STATUS_LIMIT_1)
         {
             offset_pos = limit_1_pos;
             initial_pos = 0;
-            motor_off();
             motor_move(DIR_RIGHT);
         }
         else
@@ -305,7 +303,7 @@ void MOTOR_CTRL_init(void)
 
     current_state = MOTOR_IDLE;
     evt = EV_START_ROUTINE;
-    step_timeout = STEP_TIMEOUT_LOW;
+    step_timeout = STEP_TIMEOUT_HIGH;
     current_absoulute_pos = 0;
     step = 0;
 }
@@ -358,14 +356,20 @@ void MOTOR_CTRL_timers(void)
 
 void MOTOR_CTRL_switch_1(void)
 {
-    status |= MOTOR_STATUS_LIMIT_1;
-    limit_1_pos = current_absoulute_pos;
+    if (!(status & MOTOR_STATUS_LIMIT_1))
+    {
+        status |= MOTOR_STATUS_LIMIT_1;
+        limit_1_pos = current_absoulute_pos;
+    }
 }
 
 void MOTOR_CTRL_switch_2(void)
 {
-    status |= MOTOR_STATUS_LIMIT_2;
-    limit_2_pos = current_absoulute_pos;
+    if (!(status & MOTOR_STATUS_LIMIT_2))
+    {
+        status |= MOTOR_STATUS_LIMIT_2;
+        limit_2_pos = current_absoulute_pos;
+    }
 }
 
 uint32_t MOTOR_CTRL_get_status(void)

@@ -13,6 +13,8 @@
 #include "port.h"
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
+#include <libopencm3/cm3/nvic.h>
+#include <libopencm3/stm32/exti.h>
 
 /********************************************************************
  *                      DEFINICIONES
@@ -56,6 +58,15 @@ void PORT_init_switches(void)
     rcc_periph_clock_enable(RCC_PORT_SWITCH);
     gpio_set_mode(MOTOR_PORT_SWITCH, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, MOTOR_SWITCHES_MASK);
     gpio_set(MOTOR_PORT_SWITCH, MOTOR_SWITCHES_MASK);
+
+    rcc_periph_clock_enable(RCC_AFIO);
+
+    nvic_enable_irq(NVIC_EXTI9_5_IRQ);
+
+    /* Configure the EXTI subsystem. */
+    exti_select_source(EXTI5 | EXTI6,GPIOA);
+    exti_set_trigger(EXTI5 | EXTI6, EXTI_TRIGGER_FALLING);
+    exti_enable_request(EXTI5 | EXTI6);
 }
 
 
