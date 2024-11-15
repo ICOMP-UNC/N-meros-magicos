@@ -71,6 +71,17 @@ void OUTPUT_led_off(void)
     PORT_led_off();
 }
 
+
+void OUTPUT_cooler_on(void)
+{
+    PORT_cooler_on();    
+}
+
+void OUTPUT_cooler_off(void)
+{
+    PORT_cooler_off();
+}
+
 void OUTPUT_buzzer_on(void)
 {
     buzzer_enabled = 1;   

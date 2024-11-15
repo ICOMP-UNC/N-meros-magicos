@@ -27,6 +27,7 @@
 #define ADC_CHANNEL_TEMP_SENSOR ADC_CHANNEL0 
 
 #define MAX_TEMP  40
+#define CRITICAL_TEMP  80
 
 #define ADC_BUFFER_SIZE 5 /* Buffer size for averaging */
 #define HISTORY_SIZE 5
@@ -56,7 +57,7 @@ static uint8_t size;
 
 uint16_t adc_buffer[ADC_BUFFER_SIZE];
 float temp_history[HISTORY_SIZE];
-static status;
+static uint8_t status;
 
 /********************************************************************
  *                      PROTOTIPO FUNCIONES LOCALES
@@ -162,7 +163,7 @@ void tim2_isr(void)
         timer_clear_flag(TIM2, TIM_SR_UIF); // Clear update interrupt flag
 
         float temp = get_temperature(average_adc_value());
-        if (temp > MAX_TEMP)
+        if (temp > CRITICAL_TEMP)
         {
             if (status == TEMP_LOW)
             {
@@ -170,15 +171,27 @@ void tim2_isr(void)
                 status = TEMP_HIGH;
             }
             OUTPUT_buzzer_on();
+            OUTPUT_cooler_on();
             MOTOR_CTRL_close();
         }
-
-        if (temp < MAX_TEMP)
+        else if (temp > MAX_TEMP)
         {
+            if (status == TEMP_LOW)
+            {
+                COMM_UART_temp_alarm();
+                status = TEMP_HIGH;
+            }
+            OUTPUT_cooler_on();
             OUTPUT_buzzer_off();
+        }
+
+        else
+        {
             if (status == TEMP_HIGH)
             {
                 COMM_UART_temp_ok();
+                OUTPUT_buzzer_off();
+                OUTPUT_cooler_off();
                 status = TEMP_LOW;
             }
 
