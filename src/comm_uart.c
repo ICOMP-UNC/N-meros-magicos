@@ -40,6 +40,8 @@
 
 #define MSG_INVALID_CMD         "COMANDO INVALIDO\r\n"
 #define MSG_CMD_OK              "COMANDO OK\r\n"
+#define MSG_TEMP_ALARM          "TEMPARATURA ELEVADA\r\n"
+#define MSG_TEMP_OK             "TEMPARATURA OK\r\n"
 
 /********************************************************************
  *                      ENUMERADOS
@@ -321,6 +323,14 @@ void COMM_UART_loop(void)
         new_msg = 1;
     }
             
+}
+void COMM_UART_temp_alarm(void)
+{
+    send_data((uint8_t*)MSG_TEMP_ALARM, sizeof MSG_TEMP_ALARM);
+}
+void COMM_UART_temp_ok(void)
+{
+    send_data((uint8_t*)MSG_TEMP_OK, sizeof MSG_TEMP_OK);
 }
 
 void usart1_isr(void) {

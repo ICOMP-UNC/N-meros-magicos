@@ -19,6 +19,8 @@
 #include "stdio.h"
 #include "motor_ctrl.h"
 #include "output.h"
+#include "comm_uart.h"
+
 /********************************************************************
  *                      DEFINICIONES
  ********************************************************************/
@@ -33,7 +35,11 @@
 /********************************************************************
  *                      ENUMERADOS
  ********************************************************************/
-
+enum
+{
+    TEMP_LOW,
+    TEMP_HIGH,
+};
 
 /********************************************************************
  *                      STRUCTS
@@ -50,6 +56,7 @@ static uint8_t size;
 
 uint16_t adc_buffer[ADC_BUFFER_SIZE];
 float temp_history[HISTORY_SIZE];
+static status;
 
 /********************************************************************
  *                      PROTOTIPO FUNCIONES LOCALES
@@ -157,12 +164,25 @@ void tim2_isr(void)
         float temp = get_temperature(average_adc_value());
         if (temp > MAX_TEMP)
         {
+            if (status == TEMP_LOW)
+            {
+                COMM_UART_temp_alarm();
+                status = TEMP_HIGH;
+            }
             OUTPUT_buzzer_on();
             MOTOR_CTRL_close();
         }
 
         if (temp < MAX_TEMP)
+        {
             OUTPUT_buzzer_off();
+            if (status == TEMP_HIGH)
+            {
+                COMM_UART_temp_ok();
+                status = TEMP_LOW;
+            }
+
+        }
 
         temp_history[head] = temp;
 

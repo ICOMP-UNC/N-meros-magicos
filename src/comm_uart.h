@@ -33,4 +33,7 @@
 
 void COMM_UART_init(void);
 void COMM_UART_loop(void);
+void COMM_UART_temp_alarm(void);
+void COMM_UART_temp_ok(void);
+
 #endif
