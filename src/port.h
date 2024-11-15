@@ -11,19 +11,17 @@
  *                      INCLUSIONES
  ********************************************************************/
 
-
 /********************************************************************
  *                      DEFINICIONES
  ********************************************************************/
 
-
 #define FALLING_EDGE 1
 
-#define MOTOR_PORT_SIGNAL  GPIOA
-#define MOTOR_PORT_SWITCH  GPIOA
-#define MOTOR_PORT_OUTPUT  GPIOA
-#define PORT_BUILT_IN_LED  GPIOC
-#define PORT_COOLER        GPIOB
+#define MOTOR_PORT_SIGNAL GPIOA
+#define MOTOR_PORT_SWITCH GPIOA
+#define MOTOR_PORT_OUTPUT GPIOA
+#define PORT_BUILT_IN_LED GPIOC
+#define PORT_COOLER GPIOB
 
 #define MOTOR_SIGNAL_1_MASK GPIO1
 #define MOTOR_SIGNAL_2_MASK GPIO2
@@ -35,22 +33,21 @@
 #define MOTOR_SWITCH_2_MASK GPIO6
 
 #define MOTOR_LED_MASK GPIO7
-#define COOLER_MASK    GPIO0
-
+#define COOLER_MASK GPIO0
 
 #define MOTOR_SWITCHES_MASK (MOTOR_SWITCH_1_MASK | MOTOR_SWITCH_2_MASK)
-#define MOTOR_SIGNALS_MASK (MOTOR_SIGNAL_1_MASK | MOTOR_SIGNAL_2_MASK | MOTOR_SIGNAL_3_MASK | MOTOR_SIGNAL_4_MASK)
+#define MOTOR_SIGNALS_MASK                                                     \
+  (MOTOR_SIGNAL_1_MASK | MOTOR_SIGNAL_2_MASK | MOTOR_SIGNAL_3_MASK |           \
+   MOTOR_SIGNAL_4_MASK)
 #define MOTOR_OUTPUTS_MASK (MOTOR_LED_MASK)
 
 /********************************************************************
  *                      ENUMERADOS
  ********************************************************************/
 
-
 /********************************************************************
  *                      STRUCTS
  ********************************************************************/
-
 
 /********************************************************************
  *                      FUNCIONES GLOBALES
