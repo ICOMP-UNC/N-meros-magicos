@@ -1,16 +1,17 @@
 /*
- * comm_uart.h
+ * sensors.h
  *
  *  Created on: Jun 14, 2024
  *      Author: Horacio
  */
-#ifndef __COMM_UART_H
-#define __COMM_UART_H
+#ifndef __SENSORS_H
+#define __SENSORS_H
 
 /********************************************************************
  *                      INCLUSIONES
  ********************************************************************/
 
+#include "stdint.h"
 
 /********************************************************************
  *                      DEFINICIONES
@@ -31,9 +32,7 @@
  *                      FUNCIONES GLOBALES
  ********************************************************************/
 
-void COMM_UART_init(void);
-void COMM_UART_loop(void);
-void COMM_UART_temp_alarm(void);
-void COMM_UART_temp_ok(void);
+void SENSORS_init(void);
+uint16_t SENSORS_read_temp_history(char *buffer);
 
 #endif

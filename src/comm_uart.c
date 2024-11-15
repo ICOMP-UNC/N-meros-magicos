@@ -17,6 +17,7 @@
 #include "stdint.h"
 #include "comm_uart.h"
 #include "motor_ctrl.h"
+#include "sensors.h"
 
 /********************************************************************
  *                      DEFINICIONES
@@ -26,11 +27,10 @@
 
 #define MSG_INIT                "1 - INICIALIZAR MOTOR\r\n"
 #define MSG_CONFIG_SPEED        "2 - CONFIGURAR VELOCIDAD\r\n"
-#define MSG_CONFIG_LIGHT        "3 - CONFUGRAR SENSOR DE LUZ\r\n"
-#define MSG_CONFIG_MOVE         "4 - CONFIGURAR SENSOR DE MOVIMIENTO\r\n"
-#define MSG_CLOSE               "5 - CERRAR PUERTA\r\n"
-#define MSG_OPEN                "6 - ABRIR PUERTA\r\n"
-#define MSG_STOP                "7 - DETENER PUERTA\r\n"
+#define MSG_CLOSE               "3 - CERRAR PUERTA\r\n"
+#define MSG_OPEN                "4 - ABRIR PUERTA\r\n"
+#define MSG_STOP                "5 - DETENER PUERTA\r\n"
+#define MSG_READ_SENSORS        "6 - LEER TEMPERATURAS\r\n"
 
 #define MSG_CONFIG_SPEED_LOW    "l - VELOCIDAD BAJA\r\n"
 #define MSG_CONFIG_SPEED_MED    "m - VELOCIDAD MEDIA\r\n"
@@ -40,6 +40,8 @@
 
 #define MSG_INVALID_CMD         "COMANDO INVALIDO\r\n"
 #define MSG_CMD_OK              "COMANDO OK\r\n"
+#define MSG_TEMP_ALARM          "TEMPARATURA ELEVADA\r\n"
+#define MSG_TEMP_OK             "TEMPARATURA OK\r\n"
 
 /********************************************************************
  *                      ENUMERADOS
@@ -49,11 +51,10 @@ enum CMD
 {
     CMD_INIT = '1',
     CMD_CONFIG_SPEED = '2',
-    CMD_CONFIG_LIGHT = '3',
-    CMD_CONFIG_MOVE = '4',
-    CMD_CLOSE = '5',
-    CMD_OPEN = '6',
-    CMD_STOP = '7',
+    CMD_CLOSE = '3',
+    CMD_OPEN = '4',
+    CMD_STOP = '5',
+    CMD_READ_SENSORS = '6',
 };
 enum ARGS
 {
@@ -142,14 +143,6 @@ static void move_fsm(void)
             next_state = WAITING_SPEED;
             send_menu = 1;
             break;
-        case CMD_CONFIG_LIGHT:
-            next_state = WAITING_LIGHT_CONFIG;
-            send_menu = 1;
-            break;
-        case CMD_CONFIG_MOVE:
-            next_state = WAITING_MOVE_CONFIG;
-            send_menu = 1;
-            break;
         case CMD_CLOSE:
             MOTOR_CTRL_close();
             next_state = WAITING_CMD;
@@ -162,11 +155,13 @@ static void move_fsm(void)
             send_menu = 1;
             send_data((uint8_t *)MSG_CMD_OK, sizeof MSG_CMD_OK);
             break;
-        case CMD_STOP:
-            MOTOR_CTRL_stop();
+        case CMD_READ_SENSORS:
             next_state = WAITING_CMD;
             send_menu = 1;
-            send_data((uint8_t *)MSG_CMD_OK, sizeof MSG_CMD_OK);
+            char history[256];
+            uint16_t history_size;
+            history_size = SENSORS_read_temp_history(history);
+            send_data((uint8_t *)history, history_size);
             break;
 
         default:
@@ -263,11 +258,10 @@ static void show_menu(void)
     case WAITING_CMD:
         send_data((uint8_t *)MSG_INIT, sizeof MSG_INIT);
         send_data((uint8_t *)MSG_CONFIG_SPEED, sizeof MSG_CONFIG_SPEED);
-        send_data((uint8_t *)MSG_CONFIG_LIGHT, sizeof MSG_CONFIG_LIGHT);
-        send_data((uint8_t *)MSG_CONFIG_MOVE, sizeof MSG_CONFIG_MOVE);
         send_data((uint8_t *)MSG_CLOSE, sizeof MSG_CLOSE);
         send_data((uint8_t *)MSG_OPEN, sizeof MSG_OPEN);
         send_data((uint8_t *)MSG_STOP, sizeof MSG_STOP);
+        send_data((uint8_t *)MSG_READ_SENSORS, sizeof MSG_READ_SENSORS);
         break;
     case WAITING_SPEED:
         send_data((uint8_t *)MSG_CONFIG_SPEED_LOW, sizeof MSG_CONFIG_SPEED_LOW);
@@ -329,6 +323,14 @@ void COMM_UART_loop(void)
         new_msg = 1;
     }
             
+}
+void COMM_UART_temp_alarm(void)
+{
+    send_data((uint8_t*)MSG_TEMP_ALARM, sizeof MSG_TEMP_ALARM);
+}
+void COMM_UART_temp_ok(void)
+{
+    send_data((uint8_t*)MSG_TEMP_OK, sizeof MSG_TEMP_OK);
 }
 
 void usart1_isr(void) {

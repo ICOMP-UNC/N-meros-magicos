@@ -25,6 +25,7 @@
 #define RCC_PORT_SIGNANLS RCC_GPIOA
 #define RCC_PORT_OUTPUTS RCC_GPIOA
 #define RCC_PORT_BUZZER RCC_GPIOB
+#define RCC_PORT_COOLER RCC_GPIOB
 #define RCC_PORT_BUILT_IN_LED RCC_GPIOC
 
 
@@ -90,9 +91,13 @@ void PORT_init_outputs(void)
 {
     rcc_periph_clock_enable(RCC_PORT_OUTPUTS);
     rcc_periph_clock_enable(RCC_PORT_BUILT_IN_LED);
+    rcc_periph_clock_enable(RCC_PORT_COOLER);
 
     gpio_set_mode(MOTOR_PORT_OUTPUT, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, MOTOR_LED_MASK);
     gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_LED_MASK);
+
+    gpio_set_mode(PORT_COOLER, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, COOLER_MASK);
+    gpio_clear(PORT_COOLER, COOLER_MASK);
 
     gpio_set_mode(PORT_BUILT_IN_LED, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, BUILT_IN_LED_MASK);
 }
@@ -179,6 +184,16 @@ void PORT_led_on(void)
 void PORT_led_off(void)
 {
     gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_LED_MASK);
+}
+
+
+void PORT_cooler_on(void)
+{
+    gpio_set(PORT_COOLER, COOLER_MASK);
+}
+void PORT_cooler_off(void)
+{
+    gpio_clear(PORT_COOLER, COOLER_MASK);
 }
 
 void PORT_built_in_led_on(void)
