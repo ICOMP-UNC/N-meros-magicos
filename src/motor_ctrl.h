@@ -22,25 +22,22 @@
  *                      ENUMERADOS
  ********************************************************************/
 
-typedef enum
-{
-    MOTOR_CTRL_LOW_SPEED,
-    MOTOR_CTRL_MED_SPEED,
-    MOTOR_CTRL_HIGH_SPEED,
+typedef enum {
+  MOTOR_CTRL_LOW_SPEED,
+  MOTOR_CTRL_MED_SPEED,
+  MOTOR_CTRL_HIGH_SPEED,
 } MOTOR_CTRL_SPEED_t;
 
-typedef enum
-{
-    MOTOR_IDLE,
-    MOTOR_START_ROUTINE,
-    MOTOR_MOVING,
-    MOTOR_STOPPING,
+typedef enum {
+  MOTOR_IDLE,
+  MOTOR_START_ROUTINE,
+  MOTOR_MOVING,
+  MOTOR_STOPPING,
 } MOTOR_states_t;
 
 /********************************************************************
  *                      STRUCTS
  ********************************************************************/
-
 
 /********************************************************************
  *                      FUNCIONES GLOBALES

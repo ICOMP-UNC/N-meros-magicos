@@ -10,13 +10,11 @@
 
 #include "app.h"
 
-int main(void)
-{
-    APP_init();
+int main(void) {
+  APP_init();
 
-    while (1)
-    {
-        APP_loop();
-    }
-    return 0 ;
+  while (1) {
+    APP_loop();
+  }
+  return 0;
 }
