@@ -91,11 +91,11 @@ static uint32_t step_timeout;
 static void motor_on(void)
 {
     int steps_matrix [4][4] =
-    //  T1, T2, T3, T4
-    {{  0,  1,  1,  1},     //SIGNAL_1
-     {  1,  0,  1,  1},     //SIGNAL_2
-     {  1,  1,  0,  1},     //SIGNAL_3
-     {  1,  1,  1,  0}};    //SIGNAL_4
+        //  T1, T2, T3, T4
+    {{  1,  0,  0,  0},     //SIGNAL_1
+     {  0,  1,  0,  0},     //SIGNAL_2
+     {  0,  0,  1,  0},     //SIGNAL_3
+     {  0,  0,  0,  1}};    //SIGNAL_4
 
     if (steps_matrix[SIGNAL_1][step])
         PORT_motor_signal_1_on();
@@ -116,6 +116,8 @@ static void motor_on(void)
         PORT_motor_signal_4_on();
     else
         PORT_motor_signal_4_off();
+    
+    PORT_led_on();
         
 }
 
@@ -125,6 +127,7 @@ static void motor_off(void)
     PORT_motor_signal_2_off();
     PORT_motor_signal_3_off();
     PORT_motor_signal_4_off();
+    PORT_led_off();
     evt = EV_FINISH_MOVE;
 }
 
@@ -303,7 +306,7 @@ void MOTOR_CTRL_init(void)
 
     current_state = MOTOR_IDLE;
     evt = EV_START_ROUTINE;
-    step_timeout = STEP_TIMEOUT_HIGH;
+    step_timeout = STEP_TIMEOUT_MED;
     current_absoulute_pos = 0;
     step = 0;
 }
