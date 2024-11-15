@@ -14,9 +14,9 @@
 #include "motor_ctrl.h"
 #include "comm_uart.h"
 #include "output.h"
+#include "sensors.h"
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/cm3/systick.h>
-
 /********************************************************************
  *                      DEFINICIONES
  ********************************************************************/
@@ -85,6 +85,7 @@ void APP_init(void)
     MOTOR_CTRL_init();
 	COMM_UART_init();
     OUTPUT_init();
+    SENSORS_init();
 }
 
 void APP_loop(void)

@@ -37,6 +37,7 @@
 static uint32_t built_in_led_timer;
 static uint32_t buzzer_timer;
 static uint8_t buzzer_state;
+static uint8_t buzzer_enabled;
 
 /********************************************************************
  *                      PROTOTIPO FUNCIONES LOCALES
@@ -72,11 +73,12 @@ void OUTPUT_led_off(void)
 
 void OUTPUT_buzzer_on(void)
 {
-    PORT_buzzer_on();    
+    buzzer_enabled = 1;   
 }
 
 void OUTPUT_buzzer_off(void)
 {
+    buzzer_enabled = 0;
     PORT_buzzer_off();
 }
 
@@ -87,17 +89,19 @@ void OUTPUT_loop(void)
         built_in_led_timer = LED_TIMEOUT;
         PORT_built_in_led_toggle();
     }
-    if (buzzer_timer == 0)
+    if (buzzer_enabled && buzzer_timer == 0)
     {
         if (buzzer_state)
         {
             buzzer_timer = BUZZER_TIMEOUT;
             buzzer_state = 0;
+            PORT_buzzer_off();
         }
         else
         {
             buzzer_timer = BUZZER_TIMEOUT;
             buzzer_state = 1;
+            PORT_buzzer_on();
         }
     }
 }
