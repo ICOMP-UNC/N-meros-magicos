@@ -54,3 +54,4 @@ dkms.conf
 /Release/
 .vscode
 build
+generated-docs
