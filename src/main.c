@@ -1,10 +1,11 @@
 /*
 ===============================================================================
  Name        : ed3_integrador.c
- Author      : $(author)
+ Author      : Horacio Rueda
  Version     :
  Copyright   : $(copyright)
- Description : main definition
+ Description : Aplicación que controla un motor paso a paso por medio de
+               Interfaz UART con monitoreo de sensor de temperatura
 ===============================================================================
 */
 

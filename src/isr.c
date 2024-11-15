@@ -40,6 +40,10 @@
  *                      FUNCIONES GLOBALES
  ********************************************************************/
 
+/**
+ * @brief Handler de interrupciones externas
+ * 
+ */
 void exti9_5_isr() {
   if (exti_get_flag_status(EXTI5)) {
     exti_reset_request(EXTI5);

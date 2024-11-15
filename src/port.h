@@ -53,27 +53,111 @@
  *                      FUNCIONES GLOBALES
  ********************************************************************/
 
+/**
+ * @brief Inicializa switches de fin de carrera
+ * 
+ */
 void PORT_init_switches(void);
+
+/**
+ * @brief Inicializa señales de control del motor
+ * 
+ */
 void PORT_init_signals(void);
 
+/**
+ * @brief Enciende señal 1 del motor
+ * 
+ */
 void PORT_motor_signal_1_on(void);
+
+/**
+ * @brief Enciende señal 2 del motor
+ */
 void PORT_motor_signal_2_on(void);
+
+/**
+ * @brief Enciende señal 3 del motor
+ */
 void PORT_motor_signal_3_on(void);
+
+/**
+ * @brief Enciende señal 4 del motor
+ */
 void PORT_motor_signal_4_on(void);
+
+/**
+ * @brief Apaga señal 1 del motor
+ */
 void PORT_motor_signal_1_off(void);
+
+/**
+ * @brief Apaga señal 2 del motor
+ */
 void PORT_motor_signal_2_off(void);
+
+/**
+ * @brief Apaga señal 3 del motor
+ */
 void PORT_motor_signal_3_off(void);
+
+/**
+ * @brief Apaga señal 4 del motor
+ */
 void PORT_motor_signal_4_off(void);
 
+/**
+ * @brief Inicializa salidas LED y cooler
+ * 
+ */
 void PORT_init_outputs(void);
+
+/**
+ * @brief Apaga el indicador led de motor
+ * 
+ */
 void PORT_led_off(void);
+
+/**
+ * @brief Enciende el indicador led de motor
+ * 
+ */
 void PORT_led_on(void);
+
+/**
+ * @brief Apaga el indicador led built-in
+ * 
+ */
 void PORT_built_in_led_off(void);
+
+/**
+ * @brief Enciende el indicador led de built-in
+ * 
+ */
 void PORT_built_in_led_on(void);
+
+/**
+ * @brief Togglea el indicador led de built-in
+ * 
+ */
 void PORT_built_in_led_toggle(void);
 
+/**
+ * @brief Inicializa el buzzer
+ * 
+ */
 void PORT_init_buzzer(void);
+
+/**
+ * @brief Habilita el buzzer
+ * 
+ */
 void PORT_buzzer_on(void);
+
+/**
+ * @brief Deshabilita el buzzer
+ * 
+ */
 void PORT_buzzer_off(void);
 
 #endif
