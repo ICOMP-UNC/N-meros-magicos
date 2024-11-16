@@ -29,7 +29,7 @@
 
 /**
  * @brief Inicializa la aplicación
- * 
+ *
  */
 void APP_init(void);
 
