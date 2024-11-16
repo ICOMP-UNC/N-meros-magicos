@@ -35,7 +35,7 @@
 #define MOTOR_SWITCH_3_MASK GPIO8
 
 #define MOTOR_LED_MASK GPIO7
-#define COOLER_MASK    GPIO0
+#define COOLER_MASK    GPIO1
 
 #define MOTOR_SWITCHES_MASK (MOTOR_SWITCH_1_MASK | MOTOR_SWITCH_2_MASK | MOTOR_SWITCH_3_MASK)
 #define MOTOR_SIGNALS_MASK  (MOTOR_SIGNAL_1_MASK | MOTOR_SIGNAL_2_MASK | MOTOR_SIGNAL_3_MASK | MOTOR_SIGNAL_4_MASK)
@@ -117,6 +117,11 @@ void PORT_init_outputs(void);
  *
  */
 void PORT_led_off(void);
+/**
+ * @brief Inicializa el cooler
+ *
+ */
+void PORT_init_cooler(void);
 
 /**
  * @brief Enciende el  cooler

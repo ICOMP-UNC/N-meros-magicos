@@ -84,13 +84,9 @@ void PORT_init_outputs(void)
 {
     rcc_periph_clock_enable(RCC_PORT_OUTPUTS);
     rcc_periph_clock_enable(RCC_PORT_BUILT_IN_LED);
-    rcc_periph_clock_enable(RCC_PORT_COOLER);
 
     gpio_set_mode(MOTOR_PORT_OUTPUT, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, MOTOR_LED_MASK);
     gpio_clear(MOTOR_PORT_OUTPUT, MOTOR_LED_MASK);
-
-    gpio_set_mode(PORT_COOLER, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, COOLER_MASK);
-    gpio_clear(PORT_COOLER, COOLER_MASK);
 
     gpio_set_mode(PORT_BUILT_IN_LED, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, BUILT_IN_LED_MASK);
 }
@@ -175,13 +171,33 @@ void PORT_toggle_led(void)
     gpio_toggle(MOTOR_PORT_OUTPUT, MOTOR_LED_MASK);
 }
 
+void PORT_init_cooler(void)
+{
+    rcc_periph_clock_enable(RCC_PORT_COOLER);
+    rcc_periph_clock_enable(RCC_TIM3);
+    gpio_set_mode(PORT_COOLER,                    // Puerto correspondiente
+                  GPIO_MODE_OUTPUT_2_MHZ,         // Máxima velocidad de switcheo
+                  GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, // Función alternativa
+                  COOLER_MASK);                   // Pines asociados al OC2, OC3 y OC4
+    timer_set_mode(TIM3,                          // Timer general 4
+                   TIM_CR1_CKD_CK_INT,            // Clock interno como fuente
+                   TIM_CR1_CMS_EDGE,              // Modo centrado
+                   TIM_CR1_DIR_UP);               // Indistinto, esto es ignorado...
+    timer_set_period(TIM3, 4096 - 1);
+    // Configuramos las salidas del timer:
+    timer_set_oc_mode(TIM3, TIM_OC4, TIM_OCM_PWM1);
+
+    timer_set_oc_value(TIM3, TIM_OC4, 10);
+
+    timer_enable_counter(TIM3);
+}
 void PORT_cooler_on(void)
 {
-    gpio_set(PORT_COOLER, COOLER_MASK);
+    timer_enable_oc_output(TIM3, TIM_OC4);
 }
 void PORT_cooler_off(void)
 {
-    gpio_clear(PORT_COOLER, COOLER_MASK);
+    timer_disable_oc_output(TIM3, TIM_OC4);
 }
 
 void PORT_built_in_led_on(void)

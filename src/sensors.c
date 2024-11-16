@@ -26,12 +26,12 @@
  ********************************************************************/
 #define ADC_CHANNEL_TEMP_SENSOR ADC_CHANNEL0
 
-#define MAX_TEMP      40
+#define WARNING_TEMP  30
+#define MAX_TEMP      50
 #define CRITICAL_TEMP 80
 
-#define ADC_BUFFER_SIZE 5 /* Buffer size for averaging */
-#define HISTORY_SIZE    5
-#define TRUE            1
+#define HISTORY_SIZE 60
+#define TRUE         1
 
 /********************************************************************
  *                      ENUMERADOS
@@ -54,7 +54,6 @@ static uint8_t head;
 static uint8_t tail;
 static uint8_t size;
 
-uint16_t adc_buffer[ADC_BUFFER_SIZE];
 float temp_history[HISTORY_SIZE];
 static uint8_t status;
 
@@ -102,7 +101,7 @@ void timer2_init(void)
 
     /* Set timer prescaler for 1Hz (1 tick per second) */
     timer_set_prescaler(TIM2, 7200 - 1);
-    timer_set_period(TIM2, 50000 - 1);
+    timer_set_period(TIM2, 10000 - 1);
 
     /* Enable Timer 2 interrupt for periodic triggering */
     timer_enable_irq(TIM2, TIM_DIER_UIE);
@@ -121,8 +120,8 @@ void dma_init(void)
 
     /* Set DMA configuration */
     dma_set_peripheral_address(DMA1, DMA_CHANNEL1, (uint32_t)&ADC_DR(ADC1)); /* ADC data register */
-    dma_set_memory_address(DMA1, DMA_CHANNEL1, (uint32_t)adc_buffer);        /* Memory buffer */
-    dma_set_number_of_data(DMA1, DMA_CHANNEL1, ADC_BUFFER_SIZE);             /* Number of data items */
+    dma_set_memory_address(DMA1, DMA_CHANNEL1, (uint32_t)&TIM_CCR4(TIM3));   /* Memory buffer */
+    dma_set_number_of_data(DMA1, DMA_CHANNEL1, 1);                           /* Number of data items */
     dma_set_priority(DMA1, DMA_CHANNEL1, DMA_CCR_PL_LOW);
     dma_set_memory_size(DMA1, DMA_CHANNEL1, DMA_CCR_MSIZE_16BIT);     /* Memory size: 16 bits */
     dma_set_peripheral_size(DMA1, DMA_CHANNEL1, DMA_CCR_PSIZE_16BIT); /* Peripheral size: 16 bits */
@@ -140,18 +139,8 @@ void dma_init(void)
 
 float get_temperature(uint16_t adc_read)
 {
-    float ret = ((float)adc_read * 330.0 / 4096.0);
+    float ret = ((float)adc_read * 330.0 / 3 / 4096.0);
     return ret;
-}
-
-uint16_t average_adc_value(void)
-{
-    uint32_t sum = 0;
-    for (int i = 0; i < ADC_BUFFER_SIZE; i++)
-    {
-        sum += adc_buffer[i];
-    }
-    return (uint16_t)(sum / ADC_BUFFER_SIZE);
 }
 
 void tim2_isr(void)
@@ -160,7 +149,7 @@ void tim2_isr(void)
     {
         timer_clear_flag(TIM2, TIM_SR_UIF); // Clear update interrupt flag
 
-        float temp = get_temperature(average_adc_value());
+        float temp = get_temperature(adc_read_regular(ADC1));
         if (temp > CRITICAL_TEMP)
         {
             if (status == TEMP_LOW)
@@ -180,6 +169,12 @@ void tim2_isr(void)
                 COMM_UART_temp_alarm();
                 status = TEMP_HIGH;
             }
+            OUTPUT_cooler_on();
+            OUTPUT_buzzer_on();
+            MOTOR_CTRL_open();
+        }
+        else if (temp > WARNING_TEMP)
+        {
             OUTPUT_cooler_on();
             OUTPUT_buzzer_off();
         }
