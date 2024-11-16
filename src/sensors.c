@@ -30,7 +30,7 @@
 #define MAX_TEMP      50
 #define CRITICAL_TEMP 80
 
-#define HISTORY_SIZE 60
+#define HISTORY_SIZE 30
 #define TRUE         1
 
 /********************************************************************

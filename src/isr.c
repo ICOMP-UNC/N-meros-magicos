@@ -35,7 +35,12 @@
 /********************************************************************
  *                      FUNCIONES LOCALES
  ********************************************************************/
-
+static void retardo(void)
+{
+    for (int i = 0; i < 1000000; i++)
+    {
+    }
+}
 /********************************************************************
  *                      FUNCIONES GLOBALES
  ********************************************************************/
@@ -49,19 +54,19 @@ void exti9_5_isr()
     if (exti_get_flag_status(EXTI5))
     {
         exti_reset_request(EXTI5);
-        // exti_disable_request(EXTI5);
+        retardo();
         MOTOR_CTRL_switch_1();
     }
     if (exti_get_flag_status(EXTI6))
     {
         exti_reset_request(EXTI6);
-        // exti_disable_request(EXTI5);
+        retardo();
         MOTOR_CTRL_switch_2();
     }
     if (exti_get_flag_status(EXTI8))
     {
         exti_reset_request(EXTI8);
-        // exti_disable_request(EXTI5);
+        retardo();
         MOTOR_CTRL_switch_3();
     }
 }
