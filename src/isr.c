@@ -40,15 +40,22 @@
  *                      FUNCIONES GLOBALES
  ********************************************************************/
 
-void exti9_5_isr() {
-  if (exti_get_flag_status(EXTI5)) {
-    exti_reset_request(EXTI5);
-    // exti_disable_request(EXTI5);
-    MOTOR_CTRL_switch_1();
-  }
-  if (exti_get_flag_status(EXTI6)) {
-    exti_reset_request(EXTI6);
-    // exti_disable_request(EXTI5);
-    MOTOR_CTRL_switch_2();
-  }
+/**
+ * @brief Handler de interrupciones externas
+ *
+ */
+void exti9_5_isr()
+{
+    if (exti_get_flag_status(EXTI5))
+    {
+        exti_reset_request(EXTI5);
+        // exti_disable_request(EXTI5);
+        MOTOR_CTRL_switch_1();
+    }
+    if (exti_get_flag_status(EXTI6))
+    {
+        exti_reset_request(EXTI6);
+        // exti_disable_request(EXTI5);
+        MOTOR_CTRL_switch_2();
+    }
 }

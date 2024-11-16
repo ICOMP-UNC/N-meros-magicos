@@ -29,7 +29,18 @@
  *                      FUNCIONES GLOBALES
  ********************************************************************/
 
+/**
+ * @brief Inicializa el sensor de temperatura
+ *
+ */
 void SENSORS_init(void);
-uint16_t SENSORS_read_temp_history(char *buffer);
+
+/**
+ * @brief Obtiene el historial de temperaturas en forma de string
+ *
+ * @param buffer buffer donde se almacenará el string
+ * @return uint16_t Longitud del string
+ */
+uint16_t SENSORS_read_temp_history(char* buffer);
 
 #endif

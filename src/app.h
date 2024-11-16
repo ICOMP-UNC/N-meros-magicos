@@ -27,7 +27,13 @@
  *                      FUNCIONES GLOBALES
  ********************************************************************/
 
+/**
+ * @brief Inicializa la aplicación
+ *
+ */
 void APP_init(void);
+
+/** Bucle principal de la aplicación */
 void APP_loop(void);
 
 #endif
