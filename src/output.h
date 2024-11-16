@@ -11,6 +11,8 @@
  *                      INCLUSIONES
  ********************************************************************/
 
+#include "stdint.h"
+
 /********************************************************************
  *                      DEFINICIONES
  ********************************************************************/
@@ -74,6 +76,12 @@ void OUTPUT_buzzer_on(void);
  *
  */
 void OUTPUT_buzzer_off(void);
+
+/**
+ * @brief setea el nivel de buzzer
+ *
+ */
+void OUTPUT_set_buzzer_level(uint16_t level);
 
 /**
  * @brief Timers del módulo

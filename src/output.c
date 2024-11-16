@@ -17,7 +17,7 @@
 /********************************************************************
  *                      DEFINICIONES
  ********************************************************************/
-#define LED_TIMEOUT    1000
+#define LED_TIMEOUT    500
 #define BUZZER_TIMEOUT 1000
 
 /********************************************************************
@@ -86,6 +86,11 @@ void OUTPUT_buzzer_off(void)
 {
     buzzer_enabled = 0;
     PORT_buzzer_off();
+}
+
+void OUTPUT_set_buzzer_level(uint16_t level)
+{
+    PORT_set_buzzer_level(level);
 }
 
 void OUTPUT_loop(void)

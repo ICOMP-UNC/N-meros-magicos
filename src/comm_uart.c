@@ -43,6 +43,7 @@
 #define MSG_CMD_OK      "COMANDO OK\r\n"
 #define MSG_TEMP_ALARM  "TEMPARATURA ELEVADA\r\n"
 #define MSG_TEMP_OK     "TEMPARATURA OK\r\n"
+#define MSG_MOTOR_ERROR "ERROR DE MOTOR\r\n"
 
 /********************************************************************
  *                      ENUMERADOS
@@ -321,6 +322,11 @@ void COMM_UART_temp_alarm(void)
 void COMM_UART_temp_ok(void)
 {
     send_data((uint8_t*)MSG_TEMP_OK, sizeof MSG_TEMP_OK);
+}
+
+void COMM_UART_motor_error(void)
+{
+    send_data((uint8_t*)MSG_MOTOR_ERROR, sizeof MSG_MOTOR_ERROR);
 }
 
 void usart1_isr(void)

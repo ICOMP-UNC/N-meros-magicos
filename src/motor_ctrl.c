@@ -11,6 +11,8 @@
  ********************************************************************/
 
 #include "motor_ctrl.h"
+#include "comm_uart.h"
+#include "output.h"
 #include "port.h"
 #include "stdio.h"
 
@@ -21,9 +23,11 @@
 #define MOTOR_STATUS_LIMIT_1 0x0001
 #define MOTOR_STATUS_LIMIT_2 0x0002
 
-#define STEP_TIMEOUT_HIGH 2
-#define STEP_TIMEOUT_MED  4
-#define STEP_TIMEOUT_LOW  8
+#define STEP_TIMEOUT_HIGH     2
+#define STEP_TIMEOUT_MED      4
+#define STEP_TIMEOUT_LOW      8
+#define START_ROUTINE_TIMEOUT 30000
+#define LED_TIMEOUT           200
 
 /********************************************************************
  *                      ENUMERADOS
@@ -36,6 +40,7 @@ typedef enum
     EV_CLOSE,
     EV_STOP,
     EV_FINISH_MOVE,
+    EV_TIMEOUT,
     EV_NONE,
 } MOTOR_events_t;
 
@@ -73,7 +78,8 @@ static int32_t limit_2_pos;
 static uint8_t step;
 static uint32_t step_timer;
 static uint32_t step_timeout;
-
+static uint32_t start_routine_timer;
+static uint32_t led_timer;
 /********************************************************************
  *                      PROTOTIPO FUNCIONES LOCALES
  ********************************************************************/
@@ -120,7 +126,6 @@ static void motor_off(void)
     PORT_motor_signal_2_off();
     PORT_motor_signal_3_off();
     PORT_motor_signal_4_off();
-    PORT_led_off();
     evt = EV_FINISH_MOVE;
 }
 
@@ -188,6 +193,7 @@ static void move_fsm(void)
             {
                 case EV_START_ROUTINE:
                     step_timer = step_timeout;
+                    start_routine_timer = START_ROUTINE_TIMEOUT;
                     next_state = MOTOR_START_ROUTINE;
                     break;
                 case EV_OPEN:
@@ -210,6 +216,13 @@ static void move_fsm(void)
             {
                 case EV_FINISH_MOVE: next_state = MOTOR_IDLE;
                 case EV_STOP: next_state = MOTOR_STOPPING; break;
+                case EV_TIMEOUT:
+                    next_state = MOTOR_ERROR;
+                    COMM_UART_motor_error();
+                    motor_off();
+                    OUTPUT_set_buzzer_level(2);
+                    OUTPUT_buzzer_on();
+                    break;
                 default: break;
             }
             break;
@@ -257,9 +270,25 @@ void execute(void)
                 motor_move(DIR_LEFT);
             }
 
+            if (start_routine_timer == 0)
+            {
+                evt = EV_TIMEOUT;
+            }
+
             break;
         case MOTOR_MOVING: motor_move_to_pos(target_pos); break;
-        case MOTOR_STOPPING: motor_off(); break;
+        case MOTOR_STOPPING:
+            motor_off();
+            PORT_led_off();
+            break;
+        case MOTOR_ERROR:
+
+            if (led_timer == 0)
+            {
+                led_timer = LED_TIMEOUT;
+                PORT_toggle_led();
+            }
+            break;
 
         default: break;
     }
@@ -323,6 +352,14 @@ void MOTOR_CTRL_timers(void)
     {
         step_timer--;
     }
+    if (start_routine_timer)
+    {
+        start_routine_timer--;
+    }
+    if (led_timer)
+    {
+        led_timer--;
+    }
 }
 
 void MOTOR_CTRL_switch_1(void)
@@ -332,6 +369,14 @@ void MOTOR_CTRL_switch_1(void)
         status |= MOTOR_STATUS_LIMIT_1;
         limit_1_pos = current_absoulute_pos;
     }
+}
+
+void MOTOR_CTRL_switch_3(void)
+{
+    if (target_pos == initial_pos)
+        MOTOR_CTRL_close();
+    else
+        MOTOR_CTRL_open();
 }
 
 void MOTOR_CTRL_switch_2(void)

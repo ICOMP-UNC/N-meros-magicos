@@ -35,6 +35,7 @@ typedef enum
     MOTOR_START_ROUTINE,
     MOTOR_MOVING,
     MOTOR_STOPPING,
+    MOTOR_ERROR,
 } MOTOR_states_t;
 
 /********************************************************************
@@ -99,6 +100,12 @@ void MOTOR_CTRL_switch_1(void);
  *
  */
 void MOTOR_CTRL_switch_2(void);
+
+/**
+ * @brief Evento de switch open/close
+ *
+ */
+void MOTOR_CTRL_switch_3(void);
 
 /**
  * @brief Lee el estado del modulo

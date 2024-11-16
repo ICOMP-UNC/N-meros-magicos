@@ -51,4 +51,10 @@ void COMM_UART_temp_alarm(void);
  */
 void COMM_UART_temp_ok(void);
 
+/**
+ * @brief Envía por UART el mensaje de error de motor
+ *
+ */
+void COMM_UART_motor_error(void);
+
 #endif
