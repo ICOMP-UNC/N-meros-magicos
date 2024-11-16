@@ -45,18 +45,14 @@ void sys_tick_handler(void);
  ********************************************************************/
 
 static void systemInit(void) {
-  /* Configure the system clock to run at 72 MHz using an 8 MHz external crystal
-   */
   rcc_clock_setup_pll(&rcc_hse_configs[RCC_CLOCK_HSE8_72MHZ]);
 }
 
-// SysTick Handler
 void sys_tick_handler(void) {
   MOTOR_CTRL_timers();
   OUTPUT_timers();
 }
 
-// Initialize SysTick to generate an interrupt every 1ms
 static void systick_setup(void) {
   systick_set_clocksource(STK_CSR_CLKSOURCE_AHB);
   systick_set_reload(72000 - 1);

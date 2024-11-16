@@ -18,6 +18,7 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/usart.h>
+#include <libopencm3/cm3/nvic.h>
 
 /********************************************************************
  *                      DEFINICIONES
@@ -287,6 +288,8 @@ void COMM_UART_init(void) {
   usart_set_mode(USART1, USART_MODE_TX_RX); // Set to both TX and RX mode
   usart_set_parity(USART1, USART_PARITY_NONE);
   usart_set_flow_control(USART1, USART_FLOWCONTROL_NONE);
+  usart_enable_rx_interrupt(USART1);
+  nvic_enable_irq(NVIC_USART1_IRQ);
 
   // Enable USART1
   usart_enable(USART1);
@@ -297,10 +300,6 @@ void COMM_UART_init(void) {
 void COMM_UART_loop(void) {
   move_fsm();
   show_menu();
-  if (usart_get_flag(USART1, USART_SR_RXNE)) {
-    byte_rcv = usart_recv(USART1); // Read the received byte
-    new_msg = 1;
-  }
 }
 void COMM_UART_temp_alarm(void) {
   send_data((uint8_t *)MSG_TEMP_ALARM, sizeof MSG_TEMP_ALARM);
