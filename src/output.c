@@ -54,6 +54,7 @@ void OUTPUT_init(void)
     PORT_init_outputs();
     PORT_init_buzzer();
     PORT_buzzer_off();
+    PORT_init_cooler();
     built_in_led_timer = 1000;
 }
 
