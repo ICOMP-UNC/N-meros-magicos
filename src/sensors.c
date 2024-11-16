@@ -26,7 +26,7 @@
  ********************************************************************/
 #define ADC_CHANNEL_TEMP_SENSOR ADC_CHANNEL0
 
-#define WARNING_TEMP  30
+#define WARNING_TEMP  15
 #define MAX_TEMP      50
 #define CRITICAL_TEMP 80
 
@@ -184,10 +184,10 @@ void tim2_isr(void)
             if (status == TEMP_HIGH)
             {
                 COMM_UART_temp_ok();
-                OUTPUT_buzzer_off();
-                OUTPUT_cooler_off();
                 status = TEMP_LOW;
             }
+            OUTPUT_buzzer_off();
+            OUTPUT_cooler_off();
         }
 
         temp_history[head] = temp;
