@@ -168,6 +168,7 @@ void tim2_isr(void)
                 COMM_UART_temp_alarm();
                 status = TEMP_HIGH;
             }
+            OUTPUT_set_buzzer_level(100);
             OUTPUT_buzzer_on();
             OUTPUT_cooler_on();
             MOTOR_CTRL_close();
