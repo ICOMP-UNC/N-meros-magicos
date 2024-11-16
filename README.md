@@ -73,3 +73,21 @@ flowchart
     sw_right-->|no| error[Fallo de inicio]
 
 ```
+
+### Hardware necsario para la implementación
+
+- Placa de desarrollo STM32F103CB
+- Motor paso a paso 28BYJ-48 5v
+- Driver para motor paso a paso ULN2003
+- Sensor de temperatura LM35 (o potenciometro)
+- Buzzer pasivo
+- 2 Switches para fin de carrera
+- 1 Switch para accionamiento manual
+- 2 diodos LED
+- 2 resistencias 220 ohms
+- Módulo conversor serie TTL a USB
+- PC con comunicación serie (se provee script menu.py)
+
+### Diagrama de conexionado
+
+![alt text for screen readers](/docs/conexionado.png "Conexionado")
