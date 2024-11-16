@@ -38,6 +38,12 @@ typedef enum
     MOTOR_ERROR,
 } MOTOR_states_t;
 
+enum
+{
+    DOOR_OPEN,
+    DOOR_CLOSED,
+    DOOR_MOVING,
+};
 /********************************************************************
  *                      STRUCTS
  ********************************************************************/
@@ -140,5 +146,12 @@ void MOTOR_CTRL_timers(void);
  * @return MOTOR_states_t
  */
 MOTOR_states_t MOTOR_CTRL_get_step(void);
+
+/**
+ * @brief Devuelve el estado de la compuerta
+ *
+ * @return uint8_t
+ */
+uint8_t MOTOR_CTRL_door_state(void);
 
 #endif

@@ -32,6 +32,7 @@
 #define MSG_OPEN         "4 - ABRIR PUERTA\r\n"
 #define MSG_STOP         "5 - DETENER PUERTA\r\n"
 #define MSG_READ_SENSORS "6 - LEER TEMPERATURAS\r\n"
+#define MSG_GET_STATUS   "7 - ESTADO DE COMPUERTA\r\n"
 
 #define MSG_CONFIG_SPEED_LOW  "l - VELOCIDAD BAJA\r\n"
 #define MSG_CONFIG_SPEED_MED  "m - VELOCIDAD MEDIA\r\n"
@@ -44,6 +45,9 @@
 #define MSG_TEMP_ALARM  "TEMPARATURA ELEVADA\r\n"
 #define MSG_TEMP_OK     "TEMPARATURA OK\r\n"
 #define MSG_MOTOR_ERROR "ERROR DE MOTOR\r\n"
+#define MSG_DOOR_OPEN   "PUERTA ABIERTA\r\n"
+#define MSG_DOOR_CLOSED "PUERTA CERRADA\r\n"
+#define MSG_DOOR_MOVING "PUERTA EN MOVIMIENTO\r\n"
 
 /********************************************************************
  *                      ENUMERADOS
@@ -57,6 +61,7 @@ enum CMD
     CMD_OPEN = '4',
     CMD_STOP = '5',
     CMD_READ_SENSORS = '6',
+    CMD_GET_STATUS = '7',
 };
 enum ARGS
 {
@@ -156,6 +161,12 @@ static void move_fsm(void)
                     send_menu = 1;
                     send_data((uint8_t*)MSG_CMD_OK, sizeof MSG_CMD_OK);
                     break;
+                case CMD_STOP:
+                    MOTOR_CTRL_stop();
+                    next_state = WAITING_CMD;
+                    send_menu = 1;
+                    send_data((uint8_t*)MSG_CMD_OK, sizeof MSG_CMD_OK);
+                    break;
                 case CMD_READ_SENSORS:
                     next_state = WAITING_CMD;
                     send_menu = 1;
@@ -163,6 +174,18 @@ static void move_fsm(void)
                     uint16_t history_size;
                     history_size = SENSORS_read_temp_history(history);
                     send_data((uint8_t*)history, history_size);
+                    break;
+                case CMD_GET_STATUS:
+                    next_state = WAITING_CMD;
+                    send_menu = 1;
+                    uint8_t door_state;
+                    door_state = MOTOR_CTRL_door_state();
+                    if (door_state == DOOR_OPEN)
+                        send_data((uint8_t*)MSG_DOOR_OPEN, sizeof MSG_DOOR_OPEN);
+                    if (door_state == DOOR_CLOSED)
+                        send_data((uint8_t*)MSG_DOOR_CLOSED, sizeof MSG_DOOR_CLOSED);
+                    if (door_state == DOOR_MOVING)
+                        send_data((uint8_t*)MSG_DOOR_MOVING, sizeof MSG_DOOR_MOVING);
                     break;
 
                 default:
@@ -260,6 +283,7 @@ static void show_menu(void)
             send_data((uint8_t*)MSG_OPEN, sizeof MSG_OPEN);
             send_data((uint8_t*)MSG_STOP, sizeof MSG_STOP);
             send_data((uint8_t*)MSG_READ_SENSORS, sizeof MSG_READ_SENSORS);
+            send_data((uint8_t*)MSG_GET_STATUS, sizeof MSG_GET_STATUS);
             break;
         case WAITING_SPEED:
             send_data((uint8_t*)MSG_CONFIG_SPEED_LOW, sizeof MSG_CONFIG_SPEED_LOW);
