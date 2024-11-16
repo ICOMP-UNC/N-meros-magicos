@@ -193,6 +193,8 @@ static void move_fsm(void)
             {
                 case EV_START_ROUTINE:
                     step_timer = step_timeout;
+                    status = 0;
+                    current_absoulute_pos = 0;
                     start_routine_timer = START_ROUTINE_TIMEOUT;
                     next_state = MOTOR_START_ROUTINE;
                     break;
@@ -396,6 +398,26 @@ uint32_t MOTOR_CTRL_get_status(void)
 int32_t MOTOR_CTRL_get_abs_pos(void)
 {
     return current_absoulute_pos;
+}
+
+uint8_t MOTOR_CTRL_door_state(void)
+{
+    int32_t initial_abs_pos = initial_pos + offset_pos;
+    int32_t final_abs_pos = final_pos + offset_pos;
+
+    int32_t error;
+    error = initial_abs_pos - current_absoulute_pos;
+    if ((error > 0 && error < POS_ERROR) || (error < 0 && (-error) < POS_ERROR))
+    {
+        return DOOR_OPEN;
+    }
+    error = final_abs_pos - current_absoulute_pos;
+    if ((error > 0 && error < POS_ERROR) || (error < 0 && (-error) < POS_ERROR))
+    {
+        return DOOR_CLOSED;
+    }
+
+    return DOOR_MOVING;
 }
 
 MOTOR_states_t MOTOR_CTRL_get_fsm_state(void)
