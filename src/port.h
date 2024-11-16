@@ -10,6 +10,7 @@
 /********************************************************************
  *                      INCLUSIONES
  ********************************************************************/
+#include "stdint.h"
 
 /********************************************************************
  *                      DEFINICIONES
@@ -31,11 +32,12 @@
 
 #define MOTOR_SWITCH_1_MASK GPIO5
 #define MOTOR_SWITCH_2_MASK GPIO6
+#define MOTOR_SWITCH_3_MASK GPIO8
 
 #define MOTOR_LED_MASK GPIO7
 #define COOLER_MASK    GPIO0
 
-#define MOTOR_SWITCHES_MASK (MOTOR_SWITCH_1_MASK | MOTOR_SWITCH_2_MASK)
+#define MOTOR_SWITCHES_MASK (MOTOR_SWITCH_1_MASK | MOTOR_SWITCH_2_MASK | MOTOR_SWITCH_3_MASK)
 #define MOTOR_SIGNALS_MASK  (MOTOR_SIGNAL_1_MASK | MOTOR_SIGNAL_2_MASK | MOTOR_SIGNAL_3_MASK | MOTOR_SIGNAL_4_MASK)
 #define MOTOR_OUTPUTS_MASK  (MOTOR_LED_MASK)
 
@@ -117,10 +119,26 @@ void PORT_init_outputs(void);
 void PORT_led_off(void);
 
 /**
+ * @brief Enciende el  cooler
+ *
+ */
+void PORT_cooler_on(void);
+/**
+ * @brief Apaga el  cooler
+ *
+ */
+void PORT_cooler_off(void);
+
+/**
  * @brief Enciende el indicador led de motor
  *
  */
 void PORT_led_on(void);
+/**
+ * @brief Togglea el indicador led de motor
+ *
+ */
+void PORT_toggle_led(void);
 
 /**
  * @brief Apaga el indicador led built-in
@@ -145,6 +163,12 @@ void PORT_built_in_led_toggle(void);
  *
  */
 void PORT_init_buzzer(void);
+
+/**
+ * @brief setea el nivel del buzzer de 0 a 100
+ *
+ */
+void PORT_set_buzzer_level(uint16_t level);
 
 /**
  * @brief Habilita el buzzer

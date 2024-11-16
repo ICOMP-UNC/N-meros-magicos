@@ -58,4 +58,10 @@ void exti9_5_isr()
         // exti_disable_request(EXTI5);
         MOTOR_CTRL_switch_2();
     }
+    if (exti_get_flag_status(EXTI8))
+    {
+        exti_reset_request(EXTI8);
+        // exti_disable_request(EXTI5);
+        MOTOR_CTRL_switch_3();
+    }
 }
