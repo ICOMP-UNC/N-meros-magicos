@@ -91,3 +91,7 @@ flowchart
 ### Diagrama de conexionado
 
 ![alt text for screen readers](/docs/conexionado.png "Conexionado")
+
+
+### Presentación
+[Enlace con la presentación del proyecto](https://www.youtube.com/watch?v=D4o0tx2uYDA)
